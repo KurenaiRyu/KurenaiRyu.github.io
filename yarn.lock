@@ -1270,13 +1270,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hexo-asset-image@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "hexo-asset-image@npm:1.0.0"
+"hexo-asset-image@https://github.com/KurenaiRyu/hexo-asset-image":
+  version: 1.0.1
+  resolution: "hexo-asset-image@https://github.com/KurenaiRyu/hexo-asset-image.git#commit=d978cfaa0023df08b606bdc03c0db6196b9bea68"
   dependencies:
     cheerio: ^0.19.0
     entities: ^1.1.2
-  checksum: 34e5bd3bff6b9ca4a131ac171a955ce51deb8ff72c751e349b3b65b54f561cfcff132c3de894fcc23a716b87659911c6adcec79b91d0fa55d45b0fbcf743bbbe
+  checksum: 9b7a2b0d85e17c7585476a6af047bb5a11c940160baabcf78eea71993d598e4ec7ed5c5bbb12e43d13f36613704b7391d8131ad96e96d63e20f5b962818154dd
   languageName: node
   linkType: hard
 
@@ -1482,7 +1482,7 @@ __metadata:
     ansi-regex: ^6.0.1
     glob-parent: ^6.0.2
     hexo: ^5.4.0
-    hexo-asset-image: ^1.0.0
+    hexo-asset-image: "https://github.com/KurenaiRyu/hexo-asset-image"
     hexo-cli: ^4.3.0
     hexo-deployer-git: ^3.0.0
     hexo-generator-archive: ^1.0.0
