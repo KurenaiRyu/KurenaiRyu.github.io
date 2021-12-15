@@ -8,3 +8,4 @@ public/
 .deploy*/
 *.iml
 .idea/
+.yarnrc.yml

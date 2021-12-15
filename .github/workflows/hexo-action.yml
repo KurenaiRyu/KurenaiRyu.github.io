@@ -24,7 +24,7 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         uses: borales/actions-yarn@v2.3.0
         with:
-          cmd: install --frozen-lockfile
+          cmd: install
 
       # Deploy hexo blog website.
       - name: Deploy
