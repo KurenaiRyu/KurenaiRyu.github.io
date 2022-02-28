@@ -20,3 +20,7 @@ layout: about
 - Japanese
 - [Netty](https://github.com/netty/netty)
 - Everything
+
+## PGP
+Primary UID: Kurenai \<kurenai233@yahoo.com\>
+Fingerprint: DC5E 371D 93BE DB5D CA96  0AB6 98FA 0519 E92E D1B9
