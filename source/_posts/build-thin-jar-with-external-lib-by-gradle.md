@@ -8,7 +8,8 @@ tags:
     - Kotlin
     - Gradle
 comments: true
-thumbnail: /gallery/sv-5th-anni.jpg
+index_img: /gallery/sv-5th-anni.jpg
+banner_img: /gallery/sv-5th-anni.jpg
 
 ---
 > 封面：Shadowverse 5周年贺图，角色是~~我女儿~~雪华。BTW，这个角色的cv是刚出道的时候非常呆萌非常贪吃的[もちょ](https://www.bilibili.com/video/BV194411M7mt)。
