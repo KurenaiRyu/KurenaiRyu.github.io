@@ -12,12 +12,12 @@ index_img: /gallery/sv-5th-anni.jpg
 banner_img: /gallery/sv-5th-anni.jpg
 
 ---
-> 封面：Shadowverse 5周年贺图，角色是~~我女儿~~雪华。BTW，这个角色的cv是刚出道的时候非常呆萌非常贪吃的[もちょ](https://www.bilibili.com/video/BV194411M7mt)。
----
 如果平时比较多使用docker部署，那么为了节省部署的时间，一般会把一些不太变化的东西放在比较前面写作为一层，分层处理后可以利用编译的缓存快速构建出镜像。
 
 因此，如果一个jar包是分离lib的话就可以做灵活的分层处理了。
 <!--more-->
+> 封面：Shadowverse 5周年贺图，角色是~~我女儿~~雪华。BTW，这个角色的cv是刚出道的时候非常呆萌非常贪吃的[もちょ](https://www.bilibili.com/video/BV194411M7mt)。
+---
 ## 0x01
 最近由于接触了一下Quarkus，发现其打包jar的方式非常棒，分离了lib，最终推送docker镜像时利用缓存只需要1M不到的数据量，虽然我以前是知道maven有类似的插件的，但是由于最近我完全入坑gradle了，也尝试过找类似的插件但都未果，此次因为尝到了甜头，以及我不想要绑定quarkus框架所以又去找了一下解决方案。
 
