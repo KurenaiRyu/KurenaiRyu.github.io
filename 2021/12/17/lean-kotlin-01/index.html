@@ -1,0 +1,735 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/gallery/avatar.jpg">
+  <link rel="icon" href="/gallery/avatar.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#4ea1d3">
+  <meta name="author" content="Kurenai">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Kotlin是一个完全兼容java的jvm语言，但不是说什么地方都跟java一样，只是说可以完全调用java。而也有于此，导致Kotlin一些使用方面需要注意一些东西，例如标准库不一定是跟JDK用法相同。不过我也没有打算完全记录，可能更多的还是做个TODO列表防健忘">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kotlin使用记录01">
+<meta property="og:url" content="https://www.kurenai.club/2021/12/17/lean-kotlin-01/index.html">
+<meta property="og:site_name" content="Kurenai&#39;s World">
+<meta property="og:description" content="Kotlin是一个完全兼容java的jvm语言，但不是说什么地方都跟java一样，只是说可以完全调用java。而也有于此，导致Kotlin一些使用方面需要注意一些东西，例如标准库不一定是跟JDK用法相同。不过我也没有打算完全记录，可能更多的还是做个TODO列表防健忘">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.kurenai.club/gallery/%E9%80%86%E5%85%89%E5%89%91%E3%83%95%E3%83%A9%E3%82%AC%E3%83%A9%E3%83%83%E3%82%AF.jpg">
+<meta property="article:published_time" content="2021-12-17T01:18:07.000Z">
+<meta property="article:modified_time" content="2022-04-03T10:17:22.564Z">
+<meta property="article:author" content="Kurenai">
+<meta property="article:tag" content="Kotlin">
+<meta property="article:tag" content="协程">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.kurenai.club/gallery/%E9%80%86%E5%85%89%E5%89%91%E3%83%95%E3%83%A9%E3%82%AC%E3%83%A9%E3%83%83%E3%82%AF.jpg">
+  
+  
+  
+  <title>Kotlin使用记录01 - Kurenai&#39;s World</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"www.kurenai.club","root":"/","version":"1.9.2","typing":{"enable":false,"typeSpeed":40,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"UA-177901991-1","gtag":"UA-177901991-1","tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript('https://www.google-analytics.com/analytics.js', function() {
+          window.ga = window.ga || function() { (ga.q = ga.q || []).push(arguments) };
+          ga.l = +new Date;
+          ga('create', 'UA-177901991-1', 'auto');
+          ga('send', 'pageview');
+        });
+      }
+    </script>
+  
+
+  
+    <!-- Google gtag.js -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript('https://www.googletagmanager.com/gtag/js?id=UA-177901991-1', function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'UA-177901991-1');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Kurenai&#39;s World</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" target="_blank" rel="noopener" href="https://github.com/KurenaiRyu">
+                <i class="iconfont icon-github-fill"></i>
+                Github
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" target="_blank" rel="noopener" href="https://space.bilibili.com/696122">
+                <i class="iconfont icon-bilibili-fill"></i>
+                B站
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/gallery/%E9%80%86%E5%85%89%E5%89%91%E3%83%95%E3%83%A9%E3%82%AC%E3%83%A9%E3%83%83%E3%82%AF.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle">Kotlin使用记录01</span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-12-17 09:18" pubdate>
+          2021年12月17日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          <!-- compatible with older versions-->
+          3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          <!-- compatible with older versions-->
+          25 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Kotlin使用记录01</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    <!-- compatible with older versions-->
+                    本文最后更新于：3 个月前
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <p>Kotlin是一个完全兼容java的jvm语言，但不是说什么地方都跟java一样，只是说可以完全调用java。而也有于此，导致Kotlin一些使用方面需要注意一些东西，例如标准库不一定是跟JDK用法相同。<br>不过我也没有打算完全记录，可能更多的还是做个TODO列表<del>防健忘</del></p>
+<span id="more"></span>
+<blockquote>
+<p>封面<br>逆光剑，Fate/hollow ataraxia中バゼット使用的武器之一。<br>在Fate/unlimited codes中与Lancer的Gae Bolg同时发动会有奇效：由于皆为因果逆转宝具——注定命中对方的心脏；后发但会先贯穿对方。两方会由于逆转因果失败而同时受到宝具伤害后倒地。</p>
+</blockquote>
+<h2 id="Kotlin的标准库"><a href="#Kotlin的标准库" class="headerlink" title="Kotlin的标准库"></a>Kotlin的标准库</h2><p>Kotlin的标准库是有别于Java的，注意调用时点进去看是什么包下面的。<del>其实好像也就想到了list跟map</del></p>
+<h3 id="List-Map等"><a href="#List-Map等" class="headerlink" title="List, Map等"></a>List, Map等</h3><p>List和Map是有些非常方便的方法构建的，<code>listOf(&quot;xxx&quot;, &quot;xxx&quot;)</code>, <code>mapOf(&quot;xxx&quot; to &quot;xxx&quot;, &quot;xxx&quot; to &quot;xxx&quot;)</code>，这些用起来非常爽快。但需要注意这里返回的类型是Kotlin下的List跟Map，它所提供的方法很有限，都是不可变的方法。但具体返回的对象则不一定是不可变的，具体点进方法内看就知道了。<br>那么我们需要一个可变的List或是Map时就需要让方法返回MutableList或是MutableMap的对象，可以用<code>mutableOfList()</code>或<code>mutableOfMap()</code>，当然你也可以用is去看是不是某类型的实例，大多其实还是返回的JDK里面的list跟map。</p>
+<h2 id="扩展函数"><a href="#扩展函数" class="headerlink" title="扩展函数"></a>扩展函数</h2><p>Kotlin要说我感到最爽的东西，大概除了协程就是这个了。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs kotlin"><span class="hljs-keyword">object</span> MarkdownUtil &#123;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">val</span> formatChar = <span class="hljs-string">&quot;_*[]()~`&gt;#+-=|&#123;&#125;.!&quot;</span>.toCharArray()<br>    <br>    <span class="hljs-comment">//扩展函数，可以直接就等于一个方法，也可以调用该类内部方法，this指代的就是当前调用这个方法的String对象</span><br>    <span class="hljs-function"><span class="hljs-keyword">fun</span> String.<span class="hljs-title">format2Markdown</span><span class="hljs-params">()</span></span>: String = MarkdownUtil.format(<span class="hljs-keyword">this</span>)<br>    <br>    <span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">format</span><span class="hljs-params">(target: <span class="hljs-type">String</span>)</span></span>: String &#123;<br>        <span class="hljs-keyword">var</span> result = target<br>        <span class="hljs-keyword">for</span> (c <span class="hljs-keyword">in</span> formatChar) &#123;<br>            result = result.replace(c.toString(), <span class="hljs-string">&quot;\\<span class="hljs-variable">$c</span>&quot;</span>)<br>        &#125;<br>        <span class="hljs-keyword">return</span> result<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>上面的例子是我写Telegram Bot时写的一个方法，用来转换掉markdown的特殊字符，调用时只需要<code>&quot;Some String&quot;.format2Markdown()</code>，这就像String类扩展了一个方法一样，当你有许多这样的方法的时候，也许你就可以像链式调用一样写起来特别爽快了。</p>
+<p>这样对于一些非自己项目内的代码进行非常简单的扩展也会大大增加写代码的效率，而不需要额外调用一个工具类对该变量做处理（不需要管其他工具类，只要点出来就好了）等等。</p>
+<h2 id="Lambda"><a href="#Lambda" class="headerlink" title="Lambda"></a>Lambda</h2><p>Kotlin的Lambda整体感觉是要强于java很多的，java很多情况下的推断都不太行导致很多地方没法使用，另外一个是Kotlin对Lambda的支持要能够放入更多的地方，例如你可以直接将一串Lambda赋值于一个变量而不需要特别的写一个函数接口，拿到的一个类型就是Unit。</p>
+<h2 id="Type-safety"><a href="#Type-safety" class="headerlink" title="Type safety"></a>Type safety</h2><p>类型安全也是Kotlin的一个区别于java的特色，虽然java其实可以用Optional作为代替，但是Kotlin也是可以使用的。  </p>
+<p>但Kotlin自身的类型安全是你声明时是否声明一个空变量，而后编译的时候就给你检测报错，并且强制要求你做一次判空，但Kotlin对判空进行了简化，用<code>value?.doSomeThing()</code>的方式先做判空，若是空则不会调用后面的方法。</p>
+<p>但实际上强制你做类型声明的时候生命是否为空也是很烦人的，因为后面你到哪里都要做一次判空，虽然Kotlin能够推断当前的变量是否为空而后不需要判空，但他无法对变量内部的成员变量做判断，就算你判空过一次他也无法后面不需要判空，虽然可以赋值到当前的变量当中但是仍然是比较麻烦的。</p>
+<p>那么这个时候其实可以考虑用Java写POJO类，Kotlin对Java类都是不做强制要求判空的。</p>
+<p>或者就需要煞费苦心分别分开不同的类比如，对接其他API的时候实际上返回的是一个聚合了很多东西的类，不同情况下不同的字段是有可能空或者非空的，如果都用一个类就会造成几乎所有字段都是可能空的尴尬，那么分开几个类型来接受就能够确切的知道当前的哪些字段是否空了，<br>这样也许就比较符合我们想要的<code>type-safe</code>了。</p>
+<h2 id="推断"><a href="#推断" class="headerlink" title="推断"></a>推断</h2><p>Kotlin的推断能力在上面也有提到，再结合IDE就会边得异常爽快，例如上面提到的，如果这个变量进行过判空操作，后面就会自动的认为这个变量是非空的而不需要再次强制要求判空。  </p>
+<p>又比如java当中非常繁琐的一种操作是<code>if a instanceOf B</code>，<code>b = (B)a</code>，然后用这个b变量操作，而Kotlin直接<code>is</code>一次判定为真后自动推断你这个变量就是某类型，而后可以直接用该变量调用该类型的方法。  </p>
+<p>而这些在IDE上是都有提示的，最典型的就是<code>val a = &quot;123&quot;</code>在IDE当中是可以显示a的类型而不需要再手动定义类型了，当然你也可以显式声明类型。</p>
+<h2 id="协程"><a href="#协程" class="headerlink" title="协程"></a>协程</h2><p>这个留在最后讲其实主要我也不是特别熟，但不得不说这也是Kotlin的一大爽点吧。但其实他也不是真正的协程，只是做了一层封装，背后实际大概是个线程池。但你不可否认这比起大多的异步编程框架还是爽上不少的，毕竟可以直接写类似同步代码的代码达到异步编程的效果实在太棒了。但说实话我在写自己项目时，也有一些不解的地方，或者说我还不太了解它的运行轨迹。<br>现在了解到的就是，实际上他是做了一个标记，类似占位符，提交这段代码到线程执行，然后马上看执行结果，若是完成则返回结果，否则就是一个占位符（我没有看过源码，也不打保票就是这样，毕竟我自己写代码的时候还是有一些问题的）。</p>
+<h3 id="一些问题"><a href="#一些问题" class="headerlink" title="一些问题"></a>一些问题</h3><ul>
+<li>在运行一些长时间保持运行的项目当中，容易造成内部卡死。<br>  e.g.  <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs kotlin">scope.launch &#123;<br>    <span class="hljs-keyword">while</span> (isActive) &#123;<br>        <span class="hljs-keyword">try</span> &#123;<br>            feedAndSend(rss, group)<br>            delay(<span class="hljs-number">1000</span> * <span class="hljs-number">60</span>)<br>        &#125; <span class="hljs-keyword">catch</span> (e: Exception) &#123;<br>            log.error(e) &#123; <span class="hljs-string">&quot;执行订阅出错。&quot;</span> &#125;<br>        &#125;<br>    &#125;<br>    log.warn &#123; <span class="hljs-string">&quot;Coroutine was inactive.&quot;</span> &#125;<br>&#125;<br></code></pre></td></tr></table></figure></li>
+<li>另外还有类似接收到服务器发送的信息进行处理，运行久了就会无报错信息卡住不动，但最初的是时候我使用Dispatch.IO，之后我自己构建线程池指定队列长度以及线程配置后就还没发生过问题。</li>
+</ul>
+<p>未完待续…</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E7%BC%96%E7%A8%8B/" class="category-chain-item">编程</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Kotlin/">#Kotlin</a>
+      
+        <a href="/tags/%E5%8D%8F%E7%A8%8B/">#协程</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Kotlin使用记录01</div>
+      <div>https://www.kurenai.club/2021/12/17/lean-kotlin-01/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Kurenai</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年12月17日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/06/23/build-thin-jar-with-external-lib-by-gradle/" title="用Gradle构建lib分离的jar包">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">用Gradle构建lib分离的jar包</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/06/16/juc-dcl-singleton/" title="Java并发编程——双检锁单例模式">
+                        <span class="hidden-mobile">Java并发编程——双检锁单例模式</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  <article id="comments" lazyload>
+    
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#comments', function() {
+      var light = 'github-light';
+      var dark = 'github-dark';
+      var schema = document.documentElement.getAttribute('data-user-color-scheme');
+      if (schema === 'dark') {
+        schema = dark;
+      } else {
+        schema = light;
+      }
+      window.UtterancesThemeLight = light;
+      window.UtterancesThemeDark = dark;
+      var s = document.createElement('script');
+      s.setAttribute('src', 'https://utteranc.es/client.js');
+      s.setAttribute('repo', 'KurenaiRyu/commit-utterances');
+      s.setAttribute('issue-term', 'title');
+      
+      s.setAttribute('label', '✨💬✨');
+      
+      s.setAttribute('theme', schema);
+      s.setAttribute('crossorigin', 'anonymous');
+      document.getElementById('comments').appendChild(s);
+    })
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+  </article>
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,760 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/gallery/avatar.jpg">
+  <link rel="icon" href="/gallery/avatar.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#4ea1d3">
+  <meta name="author" content="Kurenai">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="其实本来想要记录问题的过程，但奈何自己也说不太好XD">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Reactor处理阻塞问题笔记">
+<meta property="og:url" content="https://www.kurenai.club/2020/03/03/lean-pulishOn-of-reactor/index.html">
+<meta property="og:site_name" content="Kurenai&#39;s World">
+<meta property="og:description" content="其实本来想要记录问题的过程，但奈何自己也说不太好XD">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-03-03T01:53:22.000Z">
+<meta property="article:modified_time" content="2021-08-25T02:47:24.845Z">
+<meta property="article:author" content="Kurenai">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="Reactor">
+<meta property="article:tag" content="Webflux">
+<meta property="article:tag" content="Spring">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>Reactor处理阻塞问题笔记 - Kurenai&#39;s World</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"www.kurenai.club","root":"/","version":"1.9.2","typing":{"enable":false,"typeSpeed":40,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"UA-177901991-1","gtag":"UA-177901991-1","tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript('https://www.google-analytics.com/analytics.js', function() {
+          window.ga = window.ga || function() { (ga.q = ga.q || []).push(arguments) };
+          ga.l = +new Date;
+          ga('create', 'UA-177901991-1', 'auto');
+          ga('send', 'pageview');
+        });
+      }
+    </script>
+  
+
+  
+    <!-- Google gtag.js -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript('https://www.googletagmanager.com/gtag/js?id=UA-177901991-1', function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'UA-177901991-1');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Kurenai&#39;s World</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" target="_blank" rel="noopener" href="https://github.com/KurenaiRyu">
+                <i class="iconfont icon-github-fill"></i>
+                Github
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" target="_blank" rel="noopener" href="https://space.bilibili.com/696122">
+                <i class="iconfont icon-bilibili-fill"></i>
+                B站
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/gallery/machi.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle">Reactor处理阻塞问题笔记</span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2020-03-03 09:53" pubdate>
+          2020年3月3日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          <!-- compatible with older versions-->
+          2.9k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          <!-- compatible with older versions-->
+          25 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Reactor处理阻塞问题笔记</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    <!-- compatible with older versions-->
+                    本文最后更新于：10 个月前
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <p>其实本来想要记录问题的过程，但奈何自己也说不太好XD</p>
+<span id="more"></span>
+<h2 id="What"><a href="#What" class="headerlink" title="What"></a>What</h2><p>由于接触Vert.x以及阅读其文档后，了解到异步编程下是不能够阻塞主线程的，不然异步将失去意义。</p>
+<p>我们需要做的是将这些阻塞线程移到其他线程进行处理。</p>
+<h2 id="How"><a href="#How" class="headerlink" title="How"></a>How</h2><p>利用Mono或是Flux的PublishOn方法将之后调用的方法都移动到其他线程进行处理。</p>
+<ul>
+<li><p><code>publishOn</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> Mono&lt;T&gt; <span class="hljs-title">publishOn</span><span class="hljs-params">(Scheduler scheduler)</span></span>;<br><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> Flux&lt;T&gt; <span class="hljs-title">publishOn</span><span class="hljs-params">(Scheduler scheduler)</span></span>;<br></code></pre></td></tr></table></figure>
+
+<p>其中<code>Scheduler</code>可用<code>Schedulers.parallel()</code>或<code>Schedulers.single()</code>进项创建或是其他方法，其中<code>single</code>和<code>parallel</code>是有一些区别的。</p>
+<ul>
+<li><p><code>single</code></p>
+<p>这一条调用链下不会同时执行，并且只有这条调用链执行完成后才会再次被调用</p>
+</li>
+<li><p><code>parallel</code></p>
+<p>与上面相反，调用链会在同时执行</p>
+</li>
+</ul>
+<p>下面是测试代码</p>
+<p><del>本人只是刚开始玩reactor，程序写的很蹩脚XD</del></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Test</span><br>  <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">test</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException </span>&#123;<br>    AtomicReference&lt;Employee&gt; employeeAR = <span class="hljs-keyword">new</span> AtomicReference&lt;&gt;(); <span class="hljs-comment">//&lt;1&gt;</span><br>    Scheduler scheduler = Schedulers.single(); <span class="hljs-comment">//&lt;2&gt;</span><br>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">5</span>; i++) &#123;<br>      <span class="hljs-keyword">int</span> finalI = i;<br>      Mono.just(<span class="hljs-number">1</span>)<br>          .publishOn(scheduler)<br>          .map(x -&gt; &#123;<br>            <span class="hljs-keyword">try</span> &#123;<br>              Thread.sleep(<span class="hljs-number">1000</span>);<br>              System.out.println(finalI + <span class="hljs-string">&quot;-&quot;</span> + Thread.currentThread()<br>                  .getName() + <span class="hljs-string">&quot;-A&quot;</span>); <span class="hljs-comment">//&lt;3&gt;</span><br>            &#125; <span class="hljs-keyword">catch</span> (InterruptedException e) &#123;<br>              e.printStackTrace();<br>            &#125;<br>            Employee emp = buildEmployee();<br>            employeeAR.set(emp); <span class="hljs-comment">//&lt;1&gt;</span><br>            <span class="hljs-keyword">return</span> emp;<br>          &#125;)<br>          .map(x -&gt; &#123;<br>            <span class="hljs-keyword">try</span> &#123;<br>              System.out.println(finalI + <span class="hljs-string">&quot;-&quot;</span> + Thread.currentThread()<br>                  .getName() + <span class="hljs-string">&quot;-B&quot;</span>); <span class="hljs-comment">//&lt;3&gt;</span><br>              Thread.sleep(<span class="hljs-number">1000</span>);<br>            &#125; <span class="hljs-keyword">catch</span> (InterruptedException e) &#123;<br>              e.printStackTrace();<br>            &#125;<br>            <span class="hljs-keyword">return</span> x;<br>          &#125;)<br>          .map(x -&gt; &#123;<br>            System.out.println(finalI + <span class="hljs-string">&quot;-&quot;</span> + Thread.currentThread()<br>                .getName() + <span class="hljs-string">&quot;-C&quot;</span>); <span class="hljs-comment">//&lt;3&gt;</span><br>            <span class="hljs-keyword">return</span> employeeAR.get().getAccountId(); <span class="hljs-comment">//&lt;1&gt;</span><br>          &#125;)<br>          .subscribe(System.out::println);<br><br>      System.out.println(Thread.currentThread()<br>          .getName());  <span class="hljs-comment">//&lt;3&gt;</span><br>    &#125;<br>    <span class="hljs-keyword">char</span> c = (<span class="hljs-keyword">char</span>) System.in.read();<br>    System.out.println(<span class="hljs-string">&quot;your char is: &quot;</span> + c);<br>  &#125;<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>&lt;1&gt; 因为涉及到匿名方法中的变量的再次调用，所以用到AtomicReference进行储存。</li>
+</ul>
+<p>下面是<code>single</code>的运行结果</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">main</span><br><span class="hljs-attribute">main</span><br><span class="hljs-attribute">main</span><br><span class="hljs-attribute">main</span><br><span class="hljs-attribute">main</span><br><span class="hljs-attribute">0</span>-single-<span class="hljs-number">1</span>-A<br><span class="hljs-attribute">0</span>-single-<span class="hljs-number">1</span>-B<br><span class="hljs-attribute">0</span>-single-<span class="hljs-number">1</span>-C<br><span class="hljs-attribute">123</span><br><span class="hljs-attribute">1</span>-single-<span class="hljs-number">1</span>-A<br><span class="hljs-attribute">1</span>-single-<span class="hljs-number">1</span>-B<br><span class="hljs-attribute">1</span>-single-<span class="hljs-number">1</span>-C<br><span class="hljs-attribute">123</span><br><span class="hljs-attribute">2</span>-single-<span class="hljs-number">1</span>-A<br><span class="hljs-attribute">2</span>-single-<span class="hljs-number">1</span>-B<br><span class="hljs-attribute">2</span>-single-<span class="hljs-number">1</span>-C<br><span class="hljs-attribute">123</span><br><span class="hljs-attribute">3</span>-single-<span class="hljs-number">1</span>-A<br><span class="hljs-attribute">3</span>-single-<span class="hljs-number">1</span>-B<br><span class="hljs-attribute">3</span>-single-<span class="hljs-number">1</span>-C<br><span class="hljs-attribute">123</span><br><span class="hljs-attribute">4</span>-single-<span class="hljs-number">1</span>-A<br><span class="hljs-attribute">4</span>-single-<span class="hljs-number">1</span>-B<br><span class="hljs-attribute">4</span>-single-<span class="hljs-number">1</span>-C<br><span class="hljs-attribute">123</span><br></code></pre></td></tr></table></figure>
+
+<p>将&lt;2&gt;中<code>single</code>改为<code>parallel</code></p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">main</span><br><span class="hljs-attribute">main</span><br><span class="hljs-attribute">main</span><br><span class="hljs-attribute">main</span><br><span class="hljs-attribute">main</span><br><span class="hljs-attribute">0</span>-parallel-<span class="hljs-number">1</span>-A<br><span class="hljs-attribute">3</span>-parallel-<span class="hljs-number">4</span>-A<br><span class="hljs-attribute">2</span>-parallel-<span class="hljs-number">3</span>-A<br><span class="hljs-attribute">4</span>-parallel-<span class="hljs-number">5</span>-A<br><span class="hljs-attribute">0</span>-parallel-<span class="hljs-number">1</span>-B<br><span class="hljs-attribute">3</span>-parallel-<span class="hljs-number">4</span>-B<br><span class="hljs-attribute">2</span>-parallel-<span class="hljs-number">3</span>-B<br><span class="hljs-attribute">1</span>-parallel-<span class="hljs-number">2</span>-A<br><span class="hljs-attribute">1</span>-parallel-<span class="hljs-number">2</span>-B<br><span class="hljs-attribute">4</span>-parallel-<span class="hljs-number">5</span>-B<br><span class="hljs-attribute">0</span>-parallel-<span class="hljs-number">1</span>-C<br><span class="hljs-attribute">1</span>-parallel-<span class="hljs-number">2</span>-C<br><span class="hljs-attribute">3</span>-parallel-<span class="hljs-number">4</span>-C<br><span class="hljs-attribute">4</span>-parallel-<span class="hljs-number">5</span>-C<br><span class="hljs-attribute">2</span>-parallel-<span class="hljs-number">3</span>-C<br><span class="hljs-attribute">123</span><br><span class="hljs-attribute">123</span><br><span class="hljs-attribute">123</span><br><span class="hljs-attribute">123</span><br><span class="hljs-attribute">123</span><br></code></pre></td></tr></table></figure>
+
+<p>观察代码中&lt;3&gt;，我们可以发现调用链当中是按照顺序执行的（我最开始以为会平行执行调用链中的方法，但并不是），而且主线程也没有被阻塞，能够快速输出当前线程名称，由此可见已经达到我们最初的目的了——不阻塞主线程。</p>
+</li>
+</ul>
+<h2 id="Why"><a href="#Why" class="headerlink" title="Why"></a>Why</h2><p>在这里我用的是Spring WebFlux，而其中会用到netty，其中有一个Eventloop模块，这是由单个线程运行的模块，这个单线程就是由我们程序所运行的主线程来担当。</p>
+<p>Eventloop会重复检查当前有没有事件产生，若有则会接收该事件并运行相应的事件响应，也就是发布订阅模式，而如果我们在其中一个调用该事件的响应方法中等待（阻塞）过久，就会导致我们无法快速处理后续产生的事件，只能够加多线程进行快速处理，这就又回到了非异步编程当中去了。</p>
+<p>所以能够快速响应才能够体现出异步编程的优势。</p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/reactor/reactor-core/issues/1756">Is there a standard way to solve blocking that must happen.</a></li>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/56706308/how-to-handle-blocking-calls-when-using-reactor-in-a-jax-rs-powered-server">How to handle blocking calls when using reactor in a JAX-RS-powered server?</a></li>
+</ul>
+<h2 id="TODO"><a href="#TODO" class="headerlink" title="TODO"></a>TODO</h2><ul>
+<li><input disabled type="checkbox"> 测试嵌套调用publishiOn是什么情况  </li>
+<li><input disabled type="checkbox"> 是否是调用一次publishOn后，后面的链式调用都是在另一条线程，是否需要再次调用一次pubulishOn保证之后的一次阻塞操作也不在主线程当中  </li>
+<li><input disabled type="checkbox"> 补充详细Evenloop  </li>
+<li><input disabled type="checkbox"> 寻找更加优雅的方式，或者看看这种链式调用是不是也是一个不太好的地方  </li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E7%BC%96%E7%A8%8B/" class="category-chain-item">编程</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Java/">#Java</a>
+      
+        <a href="/tags/Reactor/">#Reactor</a>
+      
+        <a href="/tags/Webflux/">#Webflux</a>
+      
+        <a href="/tags/Spring/">#Spring</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Reactor处理阻塞问题笔记</div>
+      <div>https://www.kurenai.club/2020/03/03/lean-pulishOn-of-reactor/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Kurenai</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2020年3月3日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/09/08/context-of-reactor/" title="Reactor中的上下文">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Reactor中的上下文</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2019/08/11/DDD/" title="Re：从零开始的领域驱动设计">
+                        <span class="hidden-mobile">Re：从零开始的领域驱动设计</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  <article id="comments" lazyload>
+    
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#comments', function() {
+      var light = 'github-light';
+      var dark = 'github-dark';
+      var schema = document.documentElement.getAttribute('data-user-color-scheme');
+      if (schema === 'dark') {
+        schema = dark;
+      } else {
+        schema = light;
+      }
+      window.UtterancesThemeLight = light;
+      window.UtterancesThemeDark = dark;
+      var s = document.createElement('script');
+      s.setAttribute('src', 'https://utteranc.es/client.js');
+      s.setAttribute('repo', 'KurenaiRyu/commit-utterances');
+      s.setAttribute('issue-term', 'title');
+      
+      s.setAttribute('label', '✨💬✨');
+      
+      s.setAttribute('theme', schema);
+      s.setAttribute('crossorigin', 'anonymous');
+      document.getElementById('comments').appendChild(s);
+    })
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+  </article>
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
