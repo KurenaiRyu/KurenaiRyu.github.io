@@ -39,7 +39,7 @@ tasks.register<Delete>("clearLib") { //清除lib
 }
 
 tasks.register<Copy>("copyLib") { //拷贝lib
-    from(configurations.compileClasspath) //从编译目录
+    from(configurations.runtimeClasspath) //从运行时目录
     into("$buildDir/libs/lib")  //到打包目录
 }
 
