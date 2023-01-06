@@ -50,7 +50,7 @@ ENTRYPOINT ["java","-jar","-Xms2048m", "-Xmx2048m", "-XX:PermSize=256M", "-XX:Ma
 FROM xxx.xxx.com:5000/library/ui-nginx:latest
 
 #维护人信息
-MAINTAINER WenboLI liwenbo@ly-sky.com
+MAINTAINER kurenai kurenai@moe.com
 
 #工作目录
 WORKDIR /usr/local/nginx
