@@ -25,12 +25,13 @@ GraalVM 与比传统在 JVM 运行是 JIT 编译不同，他是 AOT 编译。由
 如今，大多常用的包都有给出一些反射、代理或者资源的配置了，所以我又准备尝试了。
 ## 环境准备
 ### Windows
-Windows 环境非常恶劣，起初我几乎放弃了，就算是现在我也不能说我真的就了解怎么搭建环境了。所以珍惜生命远离 Windows（
+Windows 环境非常恶劣，起初我几乎放弃了。
+就算是现在我也不能说我真的就了解怎么搭建环境了。
+所以珍惜生命远离 Windows（
 
-Ok，其实现在 GraalVM 的官网上面已经放出了一篇[教程](https://medium.com/graalvm/using-graalvm-and-native-image-on-windows-10-9954dc071311)，
-实际上就是需要安装好 vs 当中的一些组件
+Ok，其实现在 GraalVM 的官网上面已经放出了一篇[教程](https://medium.com/graalvm/using-graalvm-and-native-image-on-windows-10-9954dc071311)，只需要安装好 vs 当中的一些组件即可
 
-然后**重点**：然后找到`x64 Native Tools Command Prompt for VS 2022`这个快捷方式，打开进入cmd，可以看到有个x64的输出，这个环境就算准备好了，2022可以是别的，但是前缀应该就是这些，x86是不支持的，交叉编译不知道。
+然后**重点**：找到`x64 Native Tools Command Prompt for VS 2022`这个快捷方式，打开进入cmd，可以看到有个x64的输出，这个环境就算准备好了，2022可以是别的，但是前缀应该就是这些，x86是不支持的，交叉编译不知道。
 
 最后配置一下环境变量 `GRAALVM_HOME` 就好了了，跟 `JAVA_HOME`，这是为了 gradle 的 graalvm 的插件（`org.graalvm.buildtools.native`）做准备。
 
@@ -41,7 +42,7 @@ Ok，其实现在 GraalVM 的官网上面已经放出了一篇[教程](https://m
 GraalVM 的配置是放在 `resource/META-INF/native-image/` 下面，我不太记得非 spring 项目下是不是默认读取这个目录下的配置了，这块现在[这个](https://github.com/oracle/graalvm-reachability-metadata)仓库有维护一些配置，可以直接拿过来用，主要是 copy 里面的 `reflect-config.json`, `proxy-config.json`，`jni-config.json`，`resource-config.json`
 
 ## Spring 配置
-依赖什么的这个也没有什么特别说的了，直接上添加一些依赖基本就没了[start.spring.io](https://start.spring.io/)就好了。
+依赖什么的这个也没有什么特别说的，直接在[start.spring.io](https://start.spring.io/)上面选好依赖，查看它配置文件怎么写就好了。
 
 ## RuntimeHintsRegistrar
 然后因为自己手写 json 不太可能，然后 GraalVM 也有一个 agent 虽然可以分析一下运行时情况，但是也不一定能够分析全，所以我们就需要`RuntimeHintsRegistrar`来代码生成。
@@ -49,7 +50,7 @@ GraalVM 的配置是放在 `resource/META-INF/native-image/` 下面，我不太�
 这个类貌似GraalVM也有提供，但是因为用的 Spring，GraalVM 提供的就没有去研究了。
 
 ```kotlin
-// hints 和 classLoader 都是实现这个类的`registerHints`传入的参数
+// hints 和 classLoader 都是实现这个类的`registerHints`方法传入的参数
 
 // 私有类无法访问时
 hints.reflection().registerTypeIfPresent(classLoader, "com.github.benmanes.caffeine.cache.PSWMW", MemberCategory.DECLARED_FIELDS, MemberCategory.INVOKE_DECLARED_CONSTRUCTORS)
@@ -105,4 +106,4 @@ Ok，万事俱备了，就剩下编译了。
 编译完成会在`build/native/nativeCompile`目录下找到可执行文件，执行即可。
 
 ## 结语
-这东西我 5600X 几乎需要花 3min+ 编译，当你不太确定或者一些库用了大量反射或者大量个人库的时候，你可能需要给他写大量的配置文件，重复 N 此编译，所以如果可以，还是在配置比较高的情况下玩，不然一天很快过去的www
+这东西我 5600X 几乎需要花 3min+ 编译，当你不太确定或者一些库用了大量反射或者大量个人库的时候，你可能需要给他写大量的配置文件，重复 N 次编译，所以如果可以，还是在配置比较高的情况下玩，不然一天很快过去的www
