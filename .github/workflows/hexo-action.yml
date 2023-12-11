@@ -3,7 +3,7 @@ name: Blog Deploy
 on:
   push:
     branches:
-      - hexo
+      - Hexo
 
 jobs:
   build:
