@@ -2,7 +2,7 @@
 title: GraalVM With Spring
 date: 2023-07-12 0:21:00
 categories:
-    - Java
+    - 折腾记录
 tags:
     - GraalVM
 comments: true
@@ -10,30 +10,31 @@ index_img: /gallery/103834884.jpg
 banner_img: /gallery/103834884.jpg
 
 ---
-最初看见 GraalVM 的时候我就想到 **Make jvm great again!** ww  
-实际上我也在之前尝试过几次，但都是不理想或者失败了。这次我看到 Spring Boot 3 对 GraalVM 的支持更加完善了，就又想跑过来试试了，毕竟写 Kotlin 编译成 Native 还是太香了！
-同样这次也都还是只做一些折腾的记录。
+最初看见 GraalVM 的时候我就想到 **Make jvm great again!** ！！  
+实际上我也在之前尝试过几次，但都是不理想或者失败了。这次我看到 Spring Boot 3 对 GraalVM 的支持更加完善了，就又想跑过来试试了，毕竟写 Kotlin 编译成 Native 还是太香了！（~~Kotlin 香，Native 香，香两次，简直香麻了~~）
+同样这次也都还是做一些折腾的记录。
 <!--more-->
 > 封面：画师是~~我岳父~~[おにねこ](https://www.pixiv.net/users/3952)，[封面链接](https://www.pixiv.net/artworks/103834884)。
 > 就说这位画师非常适合黑色哥特萝莉，201x年初时其实脸跟一些细节都让人感觉比较潦草，但是非常个人风格，背景也很好。现在整体都相较要好很多，细节要更加多。
 ---
 ## 前言
-GraalVM 与比传统在 JVM 运行是 JIT 编译不同，他是 AOT 编译。由于去掉了 JVM 后一些运行时的动态分析就会失效，如反射，代理，JNI，SPI 等等，而且这里面一些资源也要显式声明，所以需要你需要大量的去告诉编译器这个类实际上运行时是谁，让它去分析这个类、资源的信息，最后才能够在运行时找到。
+GraalVM 与传统在 JVM 中运行的 JIT 编译不同，他是 AOT 编译。由于去掉了 JVM 后一些运行时的动态分析就会失效，如反射，代理，JNI，SPI 等等，而这里面一些资源也要显式声明，所以你需要大量的去告诉编译器这个类实际上运行时是谁，让它去分析这个类、资源的信息，最后才能够在运行时找到。
 
-这其实几乎就是转 GraalVM 的全部工作了，或者说这里面的工作量实在太大了。最初时大多项目都没有提供支持，导致你需要自己等待编译，然后运行报错看提示再去告诉编译器需要分析什么东西。
+这几乎就是转 GraalVM 的全部工作了，但不得不说这些工作量还是很大的。最初时大多项目都没有提供支持，导致你需要自己等待编译，然后运行报错看提示再去告诉编译器需要分析什么东西。
 
 如今，大多常用的包都有给出一些反射、代理或者资源的配置了，所以我又准备尝试了。
+
 ## 环境准备
 ### Windows
 Windows 环境非常恶劣，起初我几乎放弃了。
 就算是现在我也不能说我真的就了解怎么搭建环境了。
-所以珍惜生命远离 Windows（
+~~所以珍惜生命远离 Windows~~
 
 Ok，其实现在 GraalVM 的官网上面已经放出了一篇[教程](https://medium.com/graalvm/using-graalvm-and-native-image-on-windows-10-9954dc071311)，只需要安装好 vs 当中的一些组件即可
 
-然后**重点**：找到`x64 Native Tools Command Prompt for VS 2022`这个快捷方式，打开进入cmd，可以看到有个x64的输出，这个环境就算准备好了，2022可以是别的，但是前缀应该就是这些，x86是不支持的，交叉编译不知道。
+**重点**：找到`x64 Native Tools Command Prompt for VS 2022`这个快捷方式，打开进入cmd，可以看到有个x64的输出，这个环境就算准备好了，2022可以是别的，但是前缀应该就是这些，x86是不支持的，交叉编译不知道。
 
-最后配置一下环境变量 `GRAALVM_HOME` 就好了了，跟 `JAVA_HOME`，这是为了 gradle 的 graalvm 的插件（`org.graalvm.buildtools.native`）做准备。
+最后配置一下环境变量 `GRAALVM_HOME` 跟 `JAVA_HOME` 就好了了，这是为了 gradle 的 graalvm 的插件（`org.graalvm.buildtools.native`）做准备。
 
 ### 其他
 其他大概就不太需要说明了，只要装上 GraalVM 的 sdk 就行了。
@@ -45,7 +46,7 @@ GraalVM 的配置是放在 `resource/META-INF/native-image/` 下面，我不太�
 依赖什么的这个也没有什么特别说的，直接在[start.spring.io](https://start.spring.io/)上面选好依赖，查看它配置文件怎么写就好了。
 
 ## RuntimeHintsRegistrar
-然后因为自己手写 json 不太可能，然后 GraalVM 也有一个 agent 虽然可以分析一下运行时情况，但是也不一定能够分析全，所以我们就需要`RuntimeHintsRegistrar`来代码生成。
+因为自己手写 json 不太可能的（~~手写是不可能手写的，这辈子都不可能~~），毕竟太多了不是人干的活，所以 GraalVM 有一个 agent 可以分析一下运行时情况。但是也不一定能够分析全，例如运行时并没有跑某几段代码等，所以我们就需要`RuntimeHintsRegistrar`来代码生成。
 
 这个类貌似GraalVM也有提供，但是因为用的 Spring，GraalVM 提供的就没有去研究了。
 
@@ -106,4 +107,4 @@ Ok，万事俱备了，就剩下编译了。
 编译完成会在`build/native/nativeCompile`目录下找到可执行文件，执行即可。
 
 ## 结语
-这东西我 5600X 几乎需要花 3min+ 编译，当你不太确定或者一些库用了大量反射或者大量个人库的时候，你可能需要给他写大量的配置文件，重复 N 次编译，所以如果可以，还是在配置比较高的情况下玩，不然一天很快过去的www
+这东西我 5600X 几乎需要花 3min+ 编译，当你不太确定或者一些库用了大量反射或者大量个人库但是没有相关配置的时候，你可能需要给他写大量的配置文件，重复 N 次编译，所以如果可以，还是在配置比较高的情况下玩，不然一天很快过去的www
