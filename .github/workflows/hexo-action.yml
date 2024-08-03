@@ -14,8 +14,6 @@ jobs:
         uses: actions/checkout@v2
         with:
           submodules: true # Checkout private submodules(themes or something else).
-      - name: Enable Corepack
-        run: corepack enable
       - name: Set Node.js 20.x
         uses: actions/setup-node@v3
         with:
@@ -29,6 +27,8 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-node-
+      - name: Enable Corepack
+        run: corepack enable
       - name: Install Dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
