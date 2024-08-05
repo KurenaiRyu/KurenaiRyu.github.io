@@ -37,7 +37,9 @@ jobs:
         env:
           GITHUB_TOKEN: $DEPLOY_TOKEN
         run: |
-          yarn dlx -p hexo-cli -p hexo-deployer-git hexo g -d
+          npm install hexo-cli -g |
+          npm install hexo-deployer-git -g |
+          hexo g -d
 
       # Deploy hexo blog website.
       # - name: Deploy
