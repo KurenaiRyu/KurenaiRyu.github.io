@@ -70,8 +70,11 @@ theme: hexo-theme-fluid
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
   type: git
-  repo: git@github.com:NatsuSai/NatsuSai.github.io.git
+  repo: https://github.com/KurenaiRyu/KurenaiRyu.github.io.git
   branch: master
+  name: Kurenai
+  email: kurenai233@yahoo.com
+  token: $GITHUB_TOKEN
 
 # Avatar Ico
 avatar: https://avatars0.githubusercontent.com/u/18627047?v=3&s=460
