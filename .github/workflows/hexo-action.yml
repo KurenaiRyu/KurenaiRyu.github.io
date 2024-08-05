@@ -33,12 +33,13 @@ jobs:
       - name: Install Dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: yarn
-      - name: Info
-        run: yarn info
+      - run: yarn info
+      - run: yarn bin
+      - run: yarn bin hexo
       - name: Deploy
         env:
           GITHUB_TOKEN: $DEPLOY_TOKEN
-        run: yarn exec hexo g -d
+        run: yarn node .\node_modules\hexo\bin\hexo g -d
 
       # Deploy hexo blog website.
       # - name: Deploy
