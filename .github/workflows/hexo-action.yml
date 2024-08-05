@@ -38,7 +38,7 @@ jobs:
       - name: Deploy
         env:
           GITHUB_TOKEN: $DEPLOY_TOKEN
-        run: yarn run hexo g -d
+        run: yarn exec hexo g -d
 
       # Deploy hexo blog website.
       # - name: Deploy
