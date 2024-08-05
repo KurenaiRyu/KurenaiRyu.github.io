@@ -37,6 +37,8 @@ jobs:
         with:
           ref: master
           path: .deploy_git
+      - run: git config --global user.name "Kurenai"
+      - run: git config --global user.email "kurenai233@yahoo.com"
       - name: Deploy
         env:
           GITHUB_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
