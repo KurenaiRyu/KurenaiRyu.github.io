@@ -39,7 +39,7 @@ banner_img: https://pixiv.re/86588827-2.jpg
 
 所以我门最终是以修改 `JPA`/`Hibernate` 的数据映射达成的，就是对特定字段添加 mapper 注解调用自定义映射逻辑，把他改成空串。
 
-重点在nullSafeGet
+重点在 `nullSafeGet` 方法
 ```java
 public class NullToEmptyCharType implements UserType {
 

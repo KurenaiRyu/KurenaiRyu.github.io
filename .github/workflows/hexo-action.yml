@@ -13,7 +13,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
+          fetch-depth: 0
           submodules: true # Checkout private submodules(themes or something else).
+      - name: Restore last modified time
+        run: git ls-files -z | while read -d '' path; do touch -d $(git log -1 --format="@%ct" "$path") "$path"; done
       - name: Enable Corepack
         run: corepack enable
       - name: Setup node
@@ -33,12 +36,12 @@ jobs:
       - name: Install Dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: yarn
-      - uses: actions/checkout@v4
-        with:
-          ref: master
-          path: .deploy_git
-      - run: git config --global user.name "Kurenai"
-      - run: git config --global user.email "kurenai233@yahoo.com"
+#      - uses: actions/checkout@v4
+#        with:
+#          ref: master
+#          path: .deploy_git
+#      - run: git config --global user.name "Kurenai"
+#      - run: git config --global user.email "kurenai233@yahoo.com"
       - name: Deploy
         env:
           GITHUB_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
