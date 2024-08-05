@@ -32,10 +32,7 @@ jobs:
             ${{ runner.os }}-node-
       - name: Install Dependencies
         if: steps.cache.outputs.cache-hit != 'true'
-        run: |
-          yarn |
-          npm install hexo-cli -g |
-          npm install hexo-deployer-git -g
+        run: yarn
       - name: Deploy
         env:
           GITHUB_TOKEN: $DEPLOY_TOKEN
