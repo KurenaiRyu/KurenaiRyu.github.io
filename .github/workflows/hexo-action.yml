@@ -22,23 +22,23 @@ jobs:
           node-version: "20"
           cache: "yarn"
       # Caching dependencies to speed up workflows. (GitHub will remove any cache entries that have not been accessed in over 7 days.)
-      # - name: Cache node modules
-      #   uses: actions/cache@v4
-      #   id: cache
-      #   with:
-      #     path: node_modules
-      #     key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-node-
+      - name: Cache node modules
+        uses: actions/cache@v4
+        id: cache
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
       - name: Install Dependencies
-        # if: steps.cache.outputs.cache-hit != 'true'
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: yarn
+      - name: Info
+        run: yarn info
+      - name: Deploy
         env:
           GITHUB_TOKEN: $DEPLOY_TOKEN
-        run: yarn | yarn run hexo g -d
-      # - name: Deploy
-      #   env:
-      #     GITHUB_TOKEN: $DEPLOY_TOKEN
-      #   run: yarn run hexo g -d
+        run: yarn run hexo g -d
 
       # Deploy hexo blog website.
       # - name: Deploy
