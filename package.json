@@ -3,13 +3,13 @@
   "version": "0.0.0",
   "private": true,
   "hexo": {
-    "version": "5.4.0"
+    "version": "7.3.0"
   },
   "dependencies": {
     "ansi-regex": "^6.0.1",
     "glob-parent": "^6.0.2",
-    "hexo": "^5.4.0",
-    "hexo-asset-image": "https://github.com/KurenaiRyu/hexo-asset-image",
+    "hexo": "7.3.0",
+    "hexo-asset-image": "^1.0.0",
     "hexo-cli": "^4.3.0",
     "hexo-deployer-git": "^3.0.0",
     "hexo-generator-archive": "^1.0.0",
@@ -31,5 +31,5 @@
     "striptags": "^3.2.0",
     "underscore": "^1.13.1"
   },
-  "packageManager": "yarn@3.1.1"
+  "packageManager": "yarn@4.4.0"
 }
