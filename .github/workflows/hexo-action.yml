@@ -33,6 +33,10 @@ jobs:
       - name: Install Dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: yarn
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+          path: .deploy_git
       - name: Deploy
         env:
           GITHUB_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
