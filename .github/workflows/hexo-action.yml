@@ -37,7 +37,7 @@ jobs:
       # Deploy hexo blog website.
       - name: Deploy
         id: deploy
-        uses: sma11black/hexo-action@v1.0.4
+        uses: KurenaiRyu/hexo-action@v1.0.4
         with:
           deploy_key: ${{ secrets.HEXO_DEPLOY_KEY }}
           user_name: Kurenai  # (or delete this input setting to use bot account)
