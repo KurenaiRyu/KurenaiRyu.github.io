@@ -1,0 +1,767 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/gallery/avatar.jpg">
+  <link rel="icon" href="/gallery/avatar.jpg">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#4ea1d3">
+  <meta name="author" content="Kurenai">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="使用Redis时有时候会碰上一些并发的问题，这里来说一下分布式锁以及加锁超时等问题。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis笔记01">
+<meta property="og:url" content="https://blog.kurenai.moe/2021/03/24/redis-note-01/index.html">
+<meta property="og:site_name" content="Kurenai&#39;s Blog">
+<meta property="og:description" content="使用Redis时有时候会碰上一些并发的问题，这里来说一下分布式锁以及加锁超时等问题。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.kurenai.moe/gallery/machi.png">
+<meta property="article:published_time" content="2021-03-24T09:18:07.000Z">
+<meta property="article:modified_time" content="2021-05-17T02:48:36.000Z">
+<meta property="article:author" content="Kurenai">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://blog.kurenai.moe/gallery/machi.png">
+  
+  
+  
+  <title>Redis笔记01 - Kurenai&#39;s Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.kurenai.moe","root":"/","version":"1.9.8","typing":{"enable":false,"typeSpeed":40,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"UA-177901991-1","tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null},"gtag":"UA-177901991-1","woyaola":null,"cnzz":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Kurenai&#39;s World</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="https://github.com/KurenaiRyu" target="_self">
+                <i class="iconfont icon-github-fill"></i>
+                <span>Github</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="https://space.bilibili.com/696122" target="_self">
+                <i class="iconfont icon-bilibili-fill"></i>
+                <span>B站</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/gallery/machi.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle">Redis笔记01</span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-03-24 09:18" pubdate>
+          2021年3月24日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          <!-- compatible with older versions-->
+          1.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          <!-- compatible with older versions-->
+          10 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Redis笔记01</h1>
+            
+              <p id="updated-time" class="note note-info" style="display: none">
+                
+                  
+                    <!-- compatible with older versions-->
+                    本文最后更新于：2021-05-17T02:48:36+00:00
+                  
+                  
+
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <p>使用Redis时有时候会碰上一些并发的问题，这里来说一下分布式锁以及加锁超时等问题。</p>
+<span id="more"></span>
+<blockquote>
+<p>封面<br>一天在某神社（？）看到的。非常向往这种中世纪风格，可能是因为《狼与香辛料》或者大多那种<br>剑与魔法的世界，都在这样的时代吧，让我觉得特别浪漫。</p>
+</blockquote>
+<h3 id="0x00"><a href="#0x00" class="headerlink" title="0x00"></a>0x00</h3><p>一般情况下，会对那些变化不大但是访问量比较大的请求做缓存处理，但缓存会在某个时刻失效，<br>此时就会有大量的请求涌向数据库从而容易引发雪崩效果。</p>
+<h3 id="0x01"><a href="#0x01" class="headerlink" title="0x01"></a>0x01</h3><p>为了避免雪崩，我们可以在更新缓存的代码块（即访问数据库）中加入分布式锁，只能够让一个线程去做缓存更新:</p>
+<figure class="highlight cos"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs cos"><span class="hljs-keyword">if</span> (redis.setIfAbsent(<span class="hljs-keyword">lock</span>, <span class="hljs-number">1</span>)) &#123; <br>    <span class="hljs-comment">// 更新缓存逻辑</span><br>    redis.del(<span class="hljs-keyword">lock</span>)<span class="hljs-comment">;</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<p>但是上面如果更新逻辑出现卡死现象就会造成死锁，所以我们还需要给锁设置超时时间，<br>但是设置超时时间一般的工具例如spring的RedisTemplate是没有把检查存在并设置值和设置超时时间<br>作为一个请求发送的，则无法保证是原子操作，这样也会发生在设置超时时间的时候没有成功导致死锁。  </p>
+<p>由于redis新版本支持了setNX和EX复合指令的原子操作（即判断存在和设置超时时间），<br>所以我们可以去扩展RedisTemplate或者当前使用的工具类；另一种方法则是用lua脚本，执行lua脚本也是一次原子操作。</p>
+<blockquote>
+<p>redis在4.0之前整体都是单线程的，4.0后开始加入多线程，但也仅是部分操作，<br>所以就算非复合指令也可以通过一个请求发送多个指令的方式来达成原子操作的目的。</p>
+</blockquote>
+<figure class="highlight cos"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs cos"><span class="hljs-keyword">if</span> (redis.setAndExpireIfAbsent(<span class="hljs-keyword">lock</span>, <span class="hljs-number">1</span>, <span class="hljs-number">10000</span>)) &#123; <br>    <span class="hljs-comment">// 更新缓存逻辑</span><br>    redis.del(<span class="hljs-keyword">lock</span>)<span class="hljs-comment">;</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>注意<br>redis 2.6.12 之前，set返回永远为ok，之后则设置成功时返回ok，<br>加入条件参数不成立则返回空</p>
+</blockquote>
+<h3 id="0x02"><a href="#0x02" class="headerlink" title="0x02"></a>0x02</h3><p>但我们可能还会发现另一个问题，更新逻辑太久了超过了超时时间，此时锁已经被解除了，<br>这就会执行导致途中另一个线程获取到了锁，导致后面删除的时候是删除的另一个线程加的锁。  </p>
+<p>所以我们需要引入一个随机id，作为当前线程加锁的标识，若后面发现不是相同id则不做删除。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-built_in">long</span> random = SnowFlakeGenerator.getInstant().nextId();<br><span class="hljs-keyword">if</span> (redis.setAndExpireIfAbsent(<span class="hljs-keyword">lock</span>, random, <span class="hljs-number">10000</span>)) &#123; <br>    <span class="hljs-comment">// 更新缓存逻辑</span><br>    <span class="hljs-keyword">if</span> (redis.<span class="hljs-keyword">get</span>(<span class="hljs-keyword">lock</span>) == random) &#123;<br>        redis.del(<span class="hljs-keyword">lock</span>);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>Ok，到了这里你可能也发现了，这个删除是不是也要做原子操作比较好点(<br>没错…<br>若是不做原子操作，那可能就会虽然拿到锁的值能够匹配上，但是下一个瞬间就因为超时而被别的其他线程获取到锁<br>从而又引发了上面的问题，删错了别的线程的锁。</p>
+<h3 id="0x03"><a href="#0x03" class="headerlink" title="0x03"></a>0x03</h3><p>类似的由于超时导致的问题还有一些情况就是计数器</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs kotlin">synchronized (LOCK) &#123; <span class="hljs-comment">//只是为了排除多线程情况，这里只想讨论超时问题，实际情况还要具体分析</span><br>    <span class="hljs-keyword">if</span>(redis.exists(userId)) &#123;<br>        redis.incr();<br>        <span class="hljs-keyword">if</span> (redis.<span class="hljs-keyword">get</span>(userId) &gt; maxAllowedTimes) &#123;<br>            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>        &#125;<br>        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        redis.<span class="hljs-keyword">set</span>(userId, <span class="hljs-number">1</span>);<br>        redis.setExpire(<span class="hljs-number">60000</span>);<br>        <span class="hljs-keyword">return</span> ture;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>上面是一段限制用户一分钟内可访问次数的redis计数器。<br>这里面如果判断到存在后的下一个瞬间恰好超时，此时incr方法在redis的行为就是先创建并设置值为0，然后加1，<br>而没有设置过期时间。导致后面永远被限制访问。  </p>
+<figure class="highlight axapta"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs axapta">synchronized (LOCK) &#123;<br> <br>    <span class="hljs-keyword">if</span>(redis.<span class="hljs-keyword">exists</span>(userId)) &#123;<br>        <span class="hljs-built_in">long</span> <span class="hljs-keyword">count</span> = (<span class="hljs-built_in">long</span>) redis.incr(userId);<br>        <br>        <span class="hljs-keyword">if</span>(redis.ttl(userId) == <span class="hljs-number">-1</span>) &#123;<br>            redis.setExpire(<span class="hljs-number">60000</span>);<br>        &#125;<br>        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">count</span> &gt; maxAllowedTimes) &#123;<br>            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>        &#125;<br>        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        redis.setEx(userId, <span class="hljs-number">60000</span>, <span class="hljs-number">1</span>);<span class="hljs-comment">//设置1并设置超时时间60000</span><br>        <span class="hljs-keyword">return</span> ture;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>ttl<br>-2 表示key不存在<br>-1 表示key存在但是没有过期时间  </p>
+</blockquote>
+<p>另外一种解决办法就是取当前时间(或者是减去某个时间后)的秒数，然后再去除以60(时间周期)，<br>这样就能够获的一个周期数(第几个周期)，将其拼接在key上，则能够避免删错或者是没有设置超时时间的问题了。</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs gradle"><span class="hljs-keyword">synchronized</span> (LOCK) &#123;<br>    <span class="hljs-keyword">long</span> <span class="hljs-keyword">times</span> = time.<span class="hljs-keyword">times</span>()<span class="hljs-comment">//假设这是获取当前时间秒数的工具类</span><br>    <span class="hljs-comment">// COUNTER_INTERVAL 时间周期</span><br>    String key = <span class="hljs-string">&quot;ACCESS_COUNT:&quot;</span> + <span class="hljs-keyword">times</span>/COUNTER_INTERVAL + <span class="hljs-string">&quot;:&quot;</span> + userId <br>    <span class="hljs-keyword">if</span>(redis.exists(key)) &#123;<br>        <span class="hljs-keyword">long</span> <span class="hljs-keyword">count</span> = (<span class="hljs-keyword">long</span>) redis.incr(key);<br>        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">count</span> &gt; maxAllowedTimes) &#123;<br>            <span class="hljs-keyword">return</span> <span class="hljs-keyword">false</span>;<br>        &#125;<br>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">true</span>;<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        redis.setEx(key, <span class="hljs-number">60000</span>, <span class="hljs-number">1</span>);<span class="hljs-comment">//设置1并设置超时时间60000</span><br>        <span class="hljs-keyword">return</span> ture;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E7%BC%96%E7%A8%8B/" class="category-chain-item">编程</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Redis笔记01</div>
+      <div>https://blog.kurenai.moe/2021/03/24/redis-note-01/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Kurenai</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年3月24日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/05/17/interview-note-01/" title="面试题笔记01">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">面试题笔记01</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/03/10/uma-musume-note/" title="ウマ娘手帳">
+                        <span class="hidden-mobile">ウマ娘手帳</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#comments', function() {
+      var light = 'github-light';
+      var dark = 'github-dark';
+      var schema = document.documentElement.getAttribute('data-user-color-scheme');
+      if (schema === 'dark') {
+        schema = dark;
+      } else {
+        schema = light;
+      }
+      window.UtterancesThemeLight = light;
+      window.UtterancesThemeDark = dark;
+      var s = document.createElement('script');
+      s.setAttribute('src', 'https://utteranc.es/client.js');
+      s.setAttribute('repo', 'KurenaiRyu/commit-utterances');
+      s.setAttribute('issue-term', 'title');
+      
+      s.setAttribute('label', '✨💬✨');
+      
+      s.setAttribute('theme', schema);
+      s.setAttribute('crossorigin', 'anonymous');
+      document.getElementById('comments').appendChild(s);
+    })
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  var relativeDate = function() {
+    var updatedTime = document.getElementById('updated-time');
+    if (updatedTime) {
+      var text = updatedTime.textContent;
+      var reg = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|[+-]\d{2}:\d{2})/;
+      var matchs = text.match(reg);
+      if (matchs) {
+        var relativeTime = moment(matchs[0]).fromNow();
+        updatedTime.textContent = text.replace(reg, relativeTime);
+      }
+      updatedTime.style.display = '';
+    }
+  };
+  Fluid.utils.createScript('https://lib.baomitu.com/moment.js/2.29.4/moment.min.js', function() {
+    if (!'zh-cn'.startsWith('en')) {
+      Fluid.utils.createScript('https://lib.baomitu.com/moment.js/2.29.4/locale/zh-cn.min.js', function() {
+        relativeDate();
+      });
+    } else {
+      relativeDate();
+    }
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
