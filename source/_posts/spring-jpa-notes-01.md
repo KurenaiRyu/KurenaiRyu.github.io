@@ -6,8 +6,8 @@ categories:
 tags:
     - JPA
 comments: true
-index_img: https://pixiv.re/86588827-2.jpg
-banner_img: https://pixiv.re/86588827-2.jpg
+index_img: /gallery/86588827_p1.jpg
+banner_img: /gallery/86588827_p1.jpg
 
 ---
 记录一下最近工作用jpa的一些心得，或者说就是坑（笑）
