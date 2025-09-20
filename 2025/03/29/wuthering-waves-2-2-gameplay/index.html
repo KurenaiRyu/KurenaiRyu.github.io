@@ -1,0 +1,772 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/gallery/avatar.jpg">
+  <link rel="icon" href="/gallery/avatar.jpg">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#4ea1d3">
+  <meta name="author" content="Kurenai">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="突然入戏鸣潮2.2，就想写点东西释放一下心情(笑)">
+<meta property="og:type" content="article">
+<meta property="og:title" content="鸣潮2.2 Gameplay">
+<meta property="og:url" content="https://blog.kurenai.moe/2025/03/29/wuthering-waves-2-2-gameplay/index.html">
+<meta property="og:site_name" content="Kurenai&#39;s Blog">
+<meta property="og:description" content="突然入戏鸣潮2.2，就想写点东西释放一下心情(笑)">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mc.kurogames.com/static4.0/assets/katixiya-fa64ee5a.webp">
+<meta property="article:published_time" content="2025-03-29T02:48:00.000Z">
+<meta property="article:modified_time" content="2025-09-20T21:44:22.000Z">
+<meta property="article:author" content="Kurenai">
+<meta property="article:tag" content="Gameplay">
+<meta property="article:tag" content="鸣潮">
+<meta property="article:tag" content="Wuthering Waves">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://mc.kurogames.com/static4.0/assets/katixiya-fa64ee5a.webp">
+  
+  
+  
+  <title>鸣潮2.2 Gameplay - Kurenai&#39;s Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.kurenai.moe","root":"/","version":"1.9.8","typing":{"enable":false,"typeSpeed":40,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"UA-177901991-1","tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null},"gtag":"UA-177901991-1","woyaola":null,"cnzz":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Kurenai&#39;s World</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="https://github.com/KurenaiRyu" target="_self">
+                <i class="iconfont icon-github-fill"></i>
+                <span>Github</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="https://space.bilibili.com/696122" target="_self">
+                <i class="iconfont icon-bilibili-fill"></i>
+                <span>B站</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/gallery/Cartethyia.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle">鸣潮2.2 Gameplay</span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-03-29 02:48" pubdate>
+          2025年3月29日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          <!-- compatible with older versions-->
+          1.8k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          <!-- compatible with older versions-->
+          15 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">鸣潮2.2 Gameplay</h1>
+            
+              <p id="updated-time" class="note note-info" style="display: none">
+                
+                  
+                    <!-- compatible with older versions-->
+                    本文最后更新于：2025-09-20T21:44:22+00:00
+                  
+                  
+
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <p>突然入戏鸣潮2.2，就想写点东西释放一下心情(笑)</p>
+<span id="more"></span>
+<blockquote>
+<p>Banner Illustration: 当然就是此次鸣潮的重点女角色卡缇西亚了  </p>
+</blockquote>
+<hr>
+<h2 id="0x0"><a href="#0x0" class="headerlink" title="0x0"></a>0x0</h2><p>该游戏只是个二游，开发周期有限，加上看起来细节也完全不及其对手的绝区零好，我擅自认为是人力方面也不太足够，并且我不是很希望因为是个二游就降低我对一些审美感受上的预期与评价，但为了避免理解错位，我先说我对于此次故事整体的感受是非常ok的，以二游来讲，不然我也不会想写一篇文章。</p>
+<h2 id="0x1"><a href="#0x1" class="headerlink" title="0x1"></a>0x1</h2><p>由于是新开的地图副本+没有什么人，所以本次故事看起来比较独立，涉及的主要人物也少，感觉算是比较能放开手脚的。 但本次其实是讲述了新地区——黎娜汐塔下的历史，是主线故事的背景设定，也不是说可以比较随意的写的。结合这两点加上绝区零这样的对手，我是觉得算是不那么畏手畏脚不愿意推进主线导致创作枯竭那一批，但我没看过明日方舟跟崩铁那块，不知道是不是其质量对比鸣潮好高一些。</p>
+<h2 id="0x2"><a href="#0x2" class="headerlink" title="0x2"></a>0x2</h2><p>先说说让我感受比较好的  </p>
+<p>本次某种程度来说也是一种命运之人打破命运的故事，基调是我喜欢的。坦白讲只是看故事本身不看整体游戏表现体验，明线上一点一点解开被歪曲的历史，一点一点构筑出这个地区的历史观，也一点一点揭开这个世界的一些秘密还是很爽的，埋下的伏笔也算回收的比较好，都是比较ok的。  </p>
+<p>新地图其实在主线过程中没有那么多的奇观，因为大多都是在划船然后解密机关，这方面反倒是不如我自己在地图中探索了，这也多亏现在能飞所以地图设计的很开放，可以颠倒重力造成一些奇观以及整个地图都不算，也不会像1.0那样图是大但是也空旷。</p>
+<p>故事叙事上或者说演出上前中期仍然是比较欠打磨，偶尔有一些过场是比较好看的，特别是由于鸣潮高质量的建模，360°几乎无死角，导致某几个桥段小卡的特写印象深刻，反倒是娇羞的那几段我只是觉得还行，偶尔也有一些地图上本身就是游戏高质量环境渲染加上简单的演出，气氛烘托应该是比较足够的，当然到没到位就不好说了，但整体来说是比较好的体验的，但故事本来就是更多的讲述历史，所以也不好说整个前中期主线走下来演出多好，起码我是有兴趣一直走完的。</p>
+<p>后期解开故事的一些真相或者回收伏笔的时候，就有渐入佳境的感觉，直到进入boss战开场演出，其bgm专门为这几秒的人声配乐，再加上中途的bgm等是非常加分的，也是由于这些我就没去思考太多单纯享受演出给到的情感氛围。  </p>
+<p>其中印象深刻的莫过于最后的剑气将大卡击飞出城堡的镜头随后立即拉近跟上并且剑已经刺穿，看几次都觉得好，紧接着又是BGM开始抓耳朵，后面救下小卡溅起水浪冲出去后立刻渐变至公主抱小卡到岸边也是感觉非常浪漫，丝毫不拖泥带水，不如说往前一点的战斗部分就其实挺好，这整一段播片应该都是比较优秀的。  </p>
+<p>另一个是大卡开头的boss战开头本身其姿态就很好，再加上bgm到位，以及故事最后recall回这个开头都是非常惊喜的，就导致这个boss战开头印象深刻。<br>还有那三把剑砍下来每次都会切一次镜头感觉非常好。</p>
+<p>这样想想，这次2.2的主线更多的还是由几个高质量部分以及一些叙事的伏笔（坎特蕾拉的二次共鸣真相，小卡的思念体真相）或是诡计（最后将boss战开场的镜头串起来）整体让我感到<br>不错，我也确实玩完后多次的去回味这些桥段久久没有平息。</p>
+<h2 id="0x3"><a href="#0x3" class="headerlink" title="0x3"></a>0x3</h2><p>其实看前面就知道，我对其也是因为有着部分的好桥段好演出盖过了大多缺点。</p>
+<p>比如游戏的欠打磨感非常强，一些播片中途加载时居然有时候不是无缝的，一瞬间还看到原地站在刚刚的地方，再加上加载时还出bgm打破刚刚的氛围是很糟糕的一件事情。  </p>
+<p>前中期除了一部分看起来比较用力的地方，大多时候动作也都不太行。举例马娘其实动作大多是那几个模板，但是足够生动以及会调整人物站位其站桩对话都是很有趣的。学园偶像表现力应该是更进一步，虽然这样要求鸣潮不公平，但是确实马娘就是体验好，就算不提马娘，最近的方舟终末地内测人物站桩对话也是很生动的。</p>
+<p>另一方面，游戏中的细节不知道是因为最终调整后导致非常不通顺还是单纯工期赶都不太能表现出来，就是硬靠大家去推敲猜测。例如最后从小卡分离利维坦还是什么的到底细节是怎么样的？飞出去的球应该怎么理解？坎的二次共鸣力量是恰如其分的助大卡撕开结界让漂泊者到来还是一直让大卡撑到了这个时候？漂泊者使用权能是比较唐突的，大家应该都还没意识到这方面的作用以及漂泊者已经上手了。</p>
+<h2 id="0x4"><a href="#0x4" class="headerlink" title="0x4"></a>0x4</h2><p>综上2.2剧情整体算是令人满意的了，但细究体验还是上上下下的，也就是说什么时候下的多一些或者上的不够多就可能不太行。不过我比较高兴的还是这个故事没有那么ML也好看，虽然有几个地方比较媚宅，但也就是一种感觉比较仰慕憧憬的感觉+为了媚宅让你有了错觉罢了。当然也不是说他们ML不好，守岸人这种甚至超越了一般的爱，后劲特别强，但我还是比较在意人物的独立性完整性吧，守岸人就挺好的，你要能再写个这样的我肯定很高兴。</p>
+<p>我想大致就这些了。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Game/" class="category-chain-item">Game</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Gameplay/" class="print-no-link">#Gameplay</a>
+      
+        <a href="/tags/%E9%B8%A3%E6%BD%AE/" class="print-no-link">#鸣潮</a>
+      
+        <a href="/tags/Wuthering-Waves/" class="print-no-link">#Wuthering Waves</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>鸣潮2.2 Gameplay</div>
+      <div>https://blog.kurenai.moe/2025/03/29/wuthering-waves-2-2-gameplay/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Kurenai</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年3月29日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2025/06/04/JPA-based-multi-tenancy-implementation/" title="基于 JPA 的多租户实现">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">基于 JPA 的多租户实现</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/09/08/black-myth-gameplay/" title="黑神话Gameplay">
+                        <span class="hidden-mobile">黑神话Gameplay</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#comments', function() {
+      var light = 'github-light';
+      var dark = 'github-dark';
+      var schema = document.documentElement.getAttribute('data-user-color-scheme');
+      if (schema === 'dark') {
+        schema = dark;
+      } else {
+        schema = light;
+      }
+      window.UtterancesThemeLight = light;
+      window.UtterancesThemeDark = dark;
+      var s = document.createElement('script');
+      s.setAttribute('src', 'https://utteranc.es/client.js');
+      s.setAttribute('repo', 'KurenaiRyu/commit-utterances');
+      s.setAttribute('issue-term', 'title');
+      
+      s.setAttribute('label', '✨💬✨');
+      
+      s.setAttribute('theme', schema);
+      s.setAttribute('crossorigin', 'anonymous');
+      document.getElementById('comments').appendChild(s);
+    })
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  var relativeDate = function() {
+    var updatedTime = document.getElementById('updated-time');
+    if (updatedTime) {
+      var text = updatedTime.textContent;
+      var reg = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|[+-]\d{2}:\d{2})/;
+      var matchs = text.match(reg);
+      if (matchs) {
+        var relativeTime = moment(matchs[0]).fromNow();
+        updatedTime.textContent = text.replace(reg, relativeTime);
+      }
+      updatedTime.style.display = '';
+    }
+  };
+  Fluid.utils.createScript('https://lib.baomitu.com/moment.js/2.29.4/moment.min.js', function() {
+    if (!'zh-cn'.startsWith('en')) {
+      Fluid.utils.createScript('https://lib.baomitu.com/moment.js/2.29.4/locale/zh-cn.min.js', function() {
+        relativeDate();
+      });
+    } else {
+      relativeDate();
+    }
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

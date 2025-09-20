@@ -1,0 +1,782 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/gallery/avatar.jpg">
+  <link rel="icon" href="/gallery/avatar.jpg">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#4ea1d3">
+  <meta name="author" content="Kurenai">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="docker中有两个概念，容器与镜像。  镜像我们可以简单的理解为是装机用的光盘，而容器就是我们用光盘所装的一个系统。实际上我们就是由镜像生成一个容器，一个镜像可以生成多个容器（只要容器互不相冲突）。 而镜像的生成就是由配置文件来决定（配置文件参数可由后期运行指令等等操作更改），具体如何配置不详细说明。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="将项目部署在docker中">
+<meta property="og:url" content="https://blog.kurenai.moe/2019/03/14/%E5%B0%86%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E5%9C%A8docker%E4%B8%AD/index.html">
+<meta property="og:site_name" content="Kurenai&#39;s Blog">
+<meta property="og:description" content="docker中有两个概念，容器与镜像。  镜像我们可以简单的理解为是装机用的光盘，而容器就是我们用光盘所装的一个系统。实际上我们就是由镜像生成一个容器，一个镜像可以生成多个容器（只要容器互不相冲突）。 而镜像的生成就是由配置文件来决定（配置文件参数可由后期运行指令等等操作更改），具体如何配置不详细说明。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-03-14T11:39:00.000Z">
+<meta property="article:modified_time" content="2023-01-06T20:14:19.000Z">
+<meta property="article:author" content="Kurenai">
+<meta property="article:tag" content="docker">
+<meta property="article:tag" content="ops">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>将项目部署在docker中 - Kurenai&#39;s Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.kurenai.moe","root":"/","version":"1.9.8","typing":{"enable":false,"typeSpeed":40,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"UA-177901991-1","tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null},"gtag":"UA-177901991-1","woyaola":null,"cnzz":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Kurenai&#39;s World</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="https://github.com/KurenaiRyu" target="_self">
+                <i class="iconfont icon-github-fill"></i>
+                <span>Github</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="https://space.bilibili.com/696122" target="_self">
+                <i class="iconfont icon-bilibili-fill"></i>
+                <span>B站</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/gallery/machi.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle">将项目部署在docker中</span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2019-03-14 11:39" pubdate>
+          2019年3月14日 中午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          <!-- compatible with older versions-->
+          1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          <!-- compatible with older versions-->
+          9 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">将项目部署在docker中</h1>
+            
+              <p id="updated-time" class="note note-info" style="display: none">
+                
+                  
+                    <!-- compatible with older versions-->
+                    本文最后更新于：2023-01-06T20:14:19+00:00
+                  
+                  
+
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <p>docker中有两个概念，容器与镜像。 </p>
+<p>镜像我们可以简单的理解为是装机用的光盘，而容器就是我们用光盘所装的一个系统。实际上我们就是由镜像生成一个容器，一个镜像可以生成多个容器（只要容器互不相冲突）。</p>
+<p>而镜像的生成就是由配置文件来决定（配置文件参数可由后期运行指令等等操作更改），具体如何配置不详细说明。</p>
+<span id="more"></span>
+<blockquote>
+<p>Banner: <a href="http://www.pixiv.net/member_illust.php?mode=medium&illust_id=47646872" title="カントク - COLORS" target>カントク - COLORS</a></p>
+</blockquote>
+<p>配置文件例子<br>Dockerfile</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs dockerfile"><span class="hljs-comment">#后端java项目</span><br><br><span class="hljs-comment">#基础镜像</span><br><span class="hljs-keyword">FROM</span> <span class="hljs-number">192.168</span>.<span class="hljs-number">1.2</span>:<span class="hljs-number">5000</span>/library/centos-jdk:<span class="hljs-number">1.7</span>.<span class="hljs-number">79</span><br><span class="hljs-comment">#作者</span><br><span class="hljs-keyword">MAINTAINER</span> kurenai kurenai@moe.com<br><span class="hljs-comment">#执行命令，主要用来安装相关的软件</span><br><span class="hljs-comment">#RUN </span><br><span class="hljs-comment">#添加文件</span><br><span class="hljs-keyword">ADD</span><span class="language-bash"> target/supervise-svc-0.0.1-SNAPSHOT.jar /usr/local</span><br><span class="hljs-keyword">RUN</span><span class="language-bash"> <span class="hljs-built_in">chmod</span> u+x /usr/local/supervise-svc-0.0.1-SNAPSHOT.jar</span><br><span class="hljs-comment">#挂载目录到容器</span><br><span class="hljs-comment">#VOLUME [&quot;/data&quot;]</span><br><span class="hljs-comment">#环境变量设置</span><br><span class="hljs-comment">#ENV </span><br><span class="hljs-comment">#开放端口</span><br><span class="hljs-keyword">EXPOSE</span> <span class="hljs-number">1234</span><br><span class="hljs-comment">#启动时执行的命令</span><br><span class="hljs-keyword">CMD</span><span class="language-bash"> [<span class="hljs-string">&quot;/bin/bash&quot;</span>]</span><br><span class="hljs-comment">#启动时执行的命令</span><br><span class="hljs-keyword">ENTRYPOINT</span><span class="language-bash"> [<span class="hljs-string">&quot;java&quot;</span>,<span class="hljs-string">&quot;-jar&quot;</span>,<span class="hljs-string">&quot;-Xms2048m&quot;</span>, <span class="hljs-string">&quot;-Xmx2048m&quot;</span>, <span class="hljs-string">&quot;-XX:PermSize=256M&quot;</span>, <span class="hljs-string">&quot;-XX:MaxPermSize=256M&quot;</span>,<span class="hljs-string">&quot;/usr/local/supervise-svc-0.0.1-SNAPSHOT.jar&quot;</span>]</span><br></code></pre></td></tr></table></figure>
+
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs dockerfile"><span class="hljs-comment">#前端react项目</span><br><br><span class="hljs-comment">#基础镜像</span><br><span class="hljs-keyword">FROM</span> xxx.xxx.com:<span class="hljs-number">5000</span>/library/ui-nginx:latest<br><br><span class="hljs-comment">#维护人信息</span><br><span class="hljs-keyword">MAINTAINER</span> kurenai kurenai@moe.com<br><br><span class="hljs-comment">#工作目录</span><br><span class="hljs-keyword">WORKDIR</span><span class="language-bash"> /usr/local/nginx</span><br><br><span class="hljs-keyword">ADD</span><span class="language-bash"> ui.tar.gz /usr/local/nginx/html/</span><br><br><span class="hljs-keyword">ADD</span><span class="language-bash"> nginx.conf /usr/local/nginx/conf/</span><br><br><span class="hljs-comment">#暴露端口</span><br><span class="hljs-keyword">EXPOSE</span> <span class="hljs-number">80</span><br><br><span class="hljs-comment">#连接时执行的命令</span><br><span class="hljs-keyword">CMD</span><span class="language-bash"> [<span class="hljs-string">&quot;/bin/bash&quot;</span>]</span><br><br><span class="hljs-comment">#启动时执行的命令</span><br><span class="hljs-comment">#ENTRYPOINT nginx -g &quot;daemon off;&quot;</span><br><span class="hljs-keyword">ENTRYPOINT</span><span class="language-bash"> /opt/run.sh</span><br></code></pre></td></tr></table></figure>
+<ul>
+<li>基础命令</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker ps       <span class="hljs-comment">#查看doker中正在运行的容器列表</span><br>docker images   <span class="hljs-comment">#查看docker中的镜像列表</span><br>docker build    <span class="hljs-comment">#将当前目录下的文件打包为镜像</span><br>docker <span class="hljs-built_in">rm</span>       <span class="hljs-comment">#移除容器</span><br>docker rmi      <span class="hljs-comment">#移除镜像</span><br>docker pull     <span class="hljs-comment">#拉取镜像</span><br>docker logs -f  <span class="hljs-comment">#查看日志</span><br>docker restart  <span class="hljs-comment">#重启容器</span><br>docker stop     <span class="hljs-comment">#停止容器运行</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="docker-compose"><a href="#docker-compose" class="headerlink" title="docker-compose"></a>docker-compose</h2><p>能够比较集中的管理镜像和容器的部署问题，不必用像原生docker那样一个一个项目进行打包镜像生成容器，只需要把n个项目的配置写在配置文件中即可进行批量打包，拉取镜像，生成容器</p>
+<p>配置文件例子<br>docker-compose.yml</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">version:</span> <span class="hljs-string">&#x27;2.2&#x27;</span><br><span class="hljs-attr">services:</span><br>  <span class="hljs-comment">#项目名称，用docker-compose做管理时，每个项目用这里配置的名称进行单独管理</span><br>  <span class="hljs-attr">base:</span><br>    <span class="hljs-comment">#镜像名，拉取镜像时也是用这个名字作为地址</span><br>    <span class="hljs-attr">image:</span> <span class="hljs-number">192.168</span><span class="hljs-number">.1</span><span class="hljs-number">.2</span><span class="hljs-string">:5000/test/base-svc:0.0.1-SNAPSHOT</span> <br>    <span class="hljs-comment">#打包路径，即docker build的路径</span><br>    <span class="hljs-attr">build:</span> <span class="hljs-string">/opt/dockerfile/base-svc</span><br>    <span class="hljs-attr">restart:</span> <span class="hljs-string">always</span><br>    <span class="hljs-comment">#环境变量</span><br>    <span class="hljs-attr">environment:</span><br>      <span class="hljs-attr">defaultZone:</span> <span class="hljs-string">http://192.168.1.3:1200/eureka/</span><br>    <span class="hljs-comment">#开放端口</span><br>    <span class="hljs-attr">ports:</span> <br>      <span class="hljs-bullet">-</span> <span class="hljs-string">&quot;1430:1430&quot;</span><br>    <span class="hljs-comment">#网络连接模式</span><br>    <span class="hljs-attr">network_mode:</span> <span class="hljs-string">&quot;bridge&quot;</span><br><br>  <span class="hljs-attr">supervise:</span><br>    <span class="hljs-attr">image:</span> <span class="hljs-number">192.168</span><span class="hljs-number">.1</span><span class="hljs-number">.2</span><span class="hljs-string">:5000/test/supervise-svc:0.0.1-SNAPSHOT</span><br>    <span class="hljs-attr">build:</span> <span class="hljs-string">/opt/dockerfile/supervise-svc</span><br>    <span class="hljs-attr">restart:</span> <span class="hljs-string">always</span><br>    <span class="hljs-attr">environment:</span><br>      <span class="hljs-attr">defaultZone:</span> <span class="hljs-string">http://192.168.1.3:1200/eureka/</span><br>    <span class="hljs-attr">ports:</span> <br>      <span class="hljs-bullet">-</span> <span class="hljs-string">&quot;1570:1570&quot;</span><br>    <span class="hljs-attr">network_mode:</span> <span class="hljs-string">&quot;bridge&quot;</span><br></code></pre></td></tr></table></figure>
+<ul>
+<li>常用命令</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker-copmpose build       <span class="hljs-comment">#打包镜像，后面不加项目名则打包所有配置了build的项目，可接多个项目名，用空格隔开</span><br>docker-compose up -d        <span class="hljs-comment">#后台运行项目，寻找本地镜像生成容器（若镜像更新则重启用新镜像生成容器），或者docker-compose.yml文件改变了也会进行更新容器，同样不接项目名为所有项目，也可以接多个项目名</span><br>docker-compose logs -f      <span class="hljs-comment">#查看日志，同上可接项目名</span><br>docker-compose pull         <span class="hljs-comment">#拉取镜像，同上可接项目名</span><br>docker-compose restart      <span class="hljs-comment">#重启容器，同上</span><br>docker-compose stop         <span class="hljs-comment">#停止运行容器，同上</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="实际生产环境部署项目"><a href="#实际生产环境部署项目" class="headerlink" title="实际生产环境部署项目"></a>实际生产环境部署项目</h2><p><code>/opt/dockerfile</code>文件夹下是每个项目的目录，每个目录下是一个Dockerfile配置文件+打包的项目文件（java为.jar, react为tar.gz, 视项目和配置文件而定）</p>
+<p><code>/opt/cloud</code>目录下是分的几个类，把几个项目归为一起，项目下是docker-compose.yml配置文件</p>
+<p>以后端java项目<code>meeting-svc</code>为例 </p>
+<ol>
+<li>打包项目为jar包，</li>
+<li>将jar包放在<code>/opt/dockerfile/meeting-svc</code>目录下</li>
+<li>进入到<code>/opt/cloud/service</code></li>
+<li>运行指令<code>docker-compose build meeting</code>(配置文件中配置的项目名为<code>meeting</code>)打包镜像</li>
+<li>运行<code>docker-compose up -d meeting</code>更新容器并运行</li>
+<li>用<code>docker-compose logs -f meeting</code>进行查看日志</li>
+</ol>
+<hr>
+<p>ps： 后端打包为tar -zcvf xxx.tar.gz -C dist/ .      #dist为编译文件目录</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/docker/" class="category-chain-item">docker</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/docker/" class="print-no-link">#docker</a>
+      
+        <a href="/tags/ops/" class="print-no-link">#ops</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>将项目部署在docker中</div>
+      <div>https://blog.kurenai.moe/2019/03/14/将项目部署在docker中/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Kurenai</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2019年3月14日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/08/11/DDD/" title="Re：从零开始的领域驱动设计">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Re：从零开始的领域驱动设计</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2018/12/30/Nginx%E5%9F%BA%E7%A1%80%E2%80%94%E2%80%94Rewrite%E8%A7%84%E5%88%99/" title="Nginx基础——Rewrite规则">
+                        <span class="hidden-mobile">Nginx基础——Rewrite规则</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#comments', function() {
+      var light = 'github-light';
+      var dark = 'github-dark';
+      var schema = document.documentElement.getAttribute('data-user-color-scheme');
+      if (schema === 'dark') {
+        schema = dark;
+      } else {
+        schema = light;
+      }
+      window.UtterancesThemeLight = light;
+      window.UtterancesThemeDark = dark;
+      var s = document.createElement('script');
+      s.setAttribute('src', 'https://utteranc.es/client.js');
+      s.setAttribute('repo', 'KurenaiRyu/commit-utterances');
+      s.setAttribute('issue-term', 'title');
+      
+      s.setAttribute('label', '✨💬✨');
+      
+      s.setAttribute('theme', schema);
+      s.setAttribute('crossorigin', 'anonymous');
+      document.getElementById('comments').appendChild(s);
+    })
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  var relativeDate = function() {
+    var updatedTime = document.getElementById('updated-time');
+    if (updatedTime) {
+      var text = updatedTime.textContent;
+      var reg = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|[+-]\d{2}:\d{2})/;
+      var matchs = text.match(reg);
+      if (matchs) {
+        var relativeTime = moment(matchs[0]).fromNow();
+        updatedTime.textContent = text.replace(reg, relativeTime);
+      }
+      updatedTime.style.display = '';
+    }
+  };
+  Fluid.utils.createScript('https://lib.baomitu.com/moment.js/2.29.4/moment.min.js', function() {
+    if (!'zh-cn'.startsWith('en')) {
+      Fluid.utils.createScript('https://lib.baomitu.com/moment.js/2.29.4/locale/zh-cn.min.js', function() {
+        relativeDate();
+      });
+    } else {
+      relativeDate();
+    }
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
