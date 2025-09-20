@@ -8,8 +8,8 @@ tags:
 hide: false
 comments: true
 toc: true
-index_img: /gallery/逆光剑フラガラック.jpg
-banner_img: /gallery/逆光剑フラガラック.jpg
+index_img: https://gamesci.cn/wukong/img/blackmyth_wukong_wallpaper_037.1798fb5a.jpg
+banner_img: https://gamesci.cn/wukong/img/blackmyth_wukong_wallpaper_037.1798fb5a.jpg
 ---
 在工作开发中我遇到了需要链接多个DB项目的情况，业务上以不同的医院进行请求查询，而一个cluster能够包含几个医院，一个cluster则会划分到一个DB（或schema）中，基本上可以认为不同cluster为不同的db connection，至此该项目就像是多租户上划分多个db的情况了。
 <!--more-->

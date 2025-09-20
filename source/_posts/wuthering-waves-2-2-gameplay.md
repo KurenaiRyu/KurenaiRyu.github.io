@@ -7,7 +7,7 @@ tags:
   - Wuthering Waves
   - Gameplay
 comments: true
-index_img: /gallery/Cartethyia.jpg
+index_img: https://mc.kurogames.com/static4.0/assets/katixiya-fa64ee5a.webp
 banner_img: /gallery/Cartethyia.jpg
 ---
 突然入戏鸣潮2.2，就想写点东西释放一下心情(笑)

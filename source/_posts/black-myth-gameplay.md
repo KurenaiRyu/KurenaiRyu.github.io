@@ -3,11 +3,12 @@ title: 黑神话Gameplay
 date: 2024-09-08 22:40:25
 category: Game
 tags:
+  - 黑神话
   - Black Myth
   - Gameplay
 comments: true
-index_img: https://www.heishenhua.com/img/Wallpaper/blackmyth_wukong_wallpaper_032.jpg
-banner_img: https://www.heishenhua.com/img/Wallpaper/blackmyth_wukong_wallpaper_032.jpg
+index_img: https://gamesci.cn/wukong/img/blackmyth_wukong_wallpaper_035.2fd107e4.jpg
+banner_img: https://gamesci.cn/wukong/img/blackmyth_wukong_wallpaper_035.2fd107e4.jpg
 ---
 黑神话最开始看到的一些评测是让我对其 ARGP 中的 A 抱有比较大期望值的，但实际上手后的2小时其实是比较失望的。但后面升级后也算有一些改善，不过也不太能去期待他战斗动作能够有非常好的体验了。
 

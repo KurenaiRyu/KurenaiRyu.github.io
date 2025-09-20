@@ -7,12 +7,11 @@ tags:
   - Wuthering Waves
   - Gameplay
 comments: true
-index_img: https://i0.hdslb.com/bfs/archive/bb141baded4e49c0cae96ade07dc57815674f0c9.jpg
-banner_img: https://i0.hdslb.com/bfs/archive/bb141baded4e49c0cae96ade07dc57815674f0c9.jpg
+index_img: https://pbs.twimg.com/media/G0ncqy6aMAIXZ65?format=jpg&name=small
+banner_img: https://pbs.twimg.com/media/G0ncqy6aMAIXZ65?format=jpg&name=orig
 ---
 世界末日了，你是希望神跟你说“别挣扎了，都是徒劳”，还是“挣扎一下，或许还有希望”？
 <!--more-->
-> Banner Illustration: 游戏内尤诺截图  
 ---
 这个版本实际上没有对原本的主线做太多的推进，是克里斯托弗与利维坦给到的一些诡计尝试吞噬七丘，但本质上来说更多的是偏向角色的，是一个融入故事发展的角色故事。
 ## 上半 - 奥古斯塔（日）
@@ -42,8 +41,8 @@ banner_img: https://i0.hdslb.com/bfs/archive/bb141baded4e49c0cae96ade07dc5781567
 
 故事中奥古斯塔小时候的小镇也呈现了被黑潮所吞噬的景象，那段小镇地图不同时间互切也很有趣。
 
-[奥古斯塔战斗无缝cg](https://www.bilibili.com/video/BV11BhDz7ErU?t=286.1&p=7)  
-[高潮部分bgm配合](https://www.bilibili.com/video/BV11BhDz7ErU?t=860.7&p=7)
+- [奥古斯塔战斗无缝cg](https://www.bilibili.com/video/BV11BhDz7ErU?t=286.1&p=7)  
+- [高潮部分bgm配合](https://www.bilibili.com/video/BV11BhDz7ErU?t=860.7&p=7)
 
 ## 下半 - 尤诺（月） 
 下半是拯救月的故事。  
@@ -64,7 +63,7 @@ banner_img: https://i0.hdslb.com/bfs/archive/bb141baded4e49c0cae96ade07dc5781567
 除此之外，故事进入最终战斗时穿插了一段战斗>过场>战斗>过场，虽然不是奥古斯塔那样无缝，但是转场非常自然，过场黑屏切入战斗时已经是一个技能动作，而且由于尤诺切换新月，弦月的动作演出非常好看，
 也就造就了这几段互相转场的自然感，而且此时的音乐其实是没有停止的，是一直延续着下去，这种精心编排的演出在视听上体验非常好。
 
-[最终战的几段过场于战斗穿插](https://www.bilibili.com/video/BV1xMptzcE3F?p=6)
+- [最终战的几段过场于战斗穿插](https://www.bilibili.com/video/BV1xMptzcE3F?t=1&p=6)
 
 ## 总体感想
 一如既往的视听享受，能够感受到比较突出的就是音乐和画面演出的精心编排，情感调动也是一如既往的好。  
