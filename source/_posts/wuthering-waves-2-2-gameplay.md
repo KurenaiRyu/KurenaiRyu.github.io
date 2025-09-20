@@ -3,7 +3,8 @@ title: 鸣潮2.2 Gameplay
 date: 2025-03-29 02:48:00
 category: Game
 tags:
-  - Final Fantasy
+  - 鸣潮
+  - Wuthering Waves
   - Gameplay
 comments: true
 index_img: /gallery/Cartethyia.jpg
