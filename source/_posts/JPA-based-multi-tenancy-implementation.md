@@ -13,6 +13,8 @@ banner_img: https://gamesci.cn/wukong/img/blackmyth_wukong_wallpaper_037.1798fb5
 ---
 在工作开发中我遇到了需要链接多个DB项目的情况，业务上以不同的医院进行请求查询，而一个cluster能够包含几个医院，一个cluster则会划分到一个DB（或schema）中，基本上可以认为不同cluster为不同的db connection，至此该项目就像是多租户上划分多个db的情况了。
 <!--more-->
+> 本文仅作记录，内容应该大多过时了，而且非常实现性质
+
 ## Requirement
 - Thread-Safe
   基于servlet一个请求绑定一个线程
@@ -38,11 +40,13 @@ Btw，Reactive就要用Reactive的线程上下文了。
 那么动态生成repository呢？我想应该是可以的，但他需要一个entitymanger，那你是不是又要自己动态生成一个entitymanager呢？然后一系列的东西就会指引到TransactionMnager上。
 
 经过断点，`DataSource#getConnection`以及`EntityManagerFactory#createEntityManager`，然后你就会发现在一个Transaction内他们是只会调用一次的，而调用的地方就是`JpaTransactionManager#doBegin`，也就是进入被`@Transactional`注解的方法前，而在前面两个方法创建后，`EntityManager`会放入这次Transaction的上下文对象`JpaTransactionObject`(该对象在doGetTransaction方法生成)的`EntityManagerHolder`中，并且绑定到`TransactionSynchronizationManager`，`DataSource`则只会绑定至`TransactionSynchronizationManager`。
+
 也就是说，spring事务开启后，处于事务期间你是无法切换`EntityMnager`以及`DataSource`的，除非你自定义一个`TransactionMnager`，但是如果我们自定义事务管理器可以拿两个`EntityManagerFactory`，但是`Repository`的配置中只会认一个`EntityManagerFactory`，所以最终你还是必须有一个Routing的`EntityManagerFactory`。
 
 之后根据源码可以了解到实际上事务管理器没有用到太多`EntityManagerFactory`的接口，我们只需要重写`AbstractEntityManagerFactoryBean`下的`createNativeEntityManagerFactory`, `getNativeEntityManagerFactory`，这些方法都根据当前上下文的cluster以及迁移的db类型配置路由到对应的FactoryBean上就好了，一般直接拿`nativeEntityManagerFactory`就好了，`destroy`方法直接调用一边维护的所有FactoryBean就好了。
 
-为什么是FactoryBean？因为这是特殊的类型，实际注入的是getObject拿到的对象，而`AbstractEntityManagerFactoryBean`的对象则会维护在`nativeEntityManagerFactory`变量上。
+> 为什么是FactoryBean？  
+> 因为这是特殊的类型，实际注入的是getObject拿到的对象，而`AbstractEntityManagerFactoryBean`的对象则会维护在`nativeEntityManagerFactory`变量上。
 
 这样我们也就可以用一个repository实现需求了。
 
@@ -58,3 +62,15 @@ Btw，务必保证有一个主要的一套配置在，不然JPA Auto Configurati
 ## Conclusion
 Demo可以在[这里](https://github.com/KurenaiRyu/multi-db-demo)看到，并且这是非常实验性的，还未跑过大量数据以及业务去验证其正确性，例如多个不同传播类型的事务互相调用互相嵌套的情况。另外`AbstractEntityManagerFactoryBean`也不是很能够确定是否这样重写几个接口就没有问题，只是目前发现`TransactionManager`没有过多使用其他接口。
 
+## 后续
+经过一段时间后，上次构思的实现发现了一些问题
+
+### 数据库链接的默认值
+由于数据库初始化的时候必须给到一个初始配置（X 数据库类型，Y cluster），这个没有太大问题，但是切换数据库的时候需要严谨的判断，判断目标数据库是否已配置，
+判断目标数据库是否在在active list中，避免拿到一个default的数据库链接。
+> 这个问题只是项目中的业务问题，别在意，主要还是想说要注意别拿错数据库链接，可能会得到一个default的链接导致拿错。
+
+### 数据ID的生成
+ID如果是用table generator并且预取N>1的id会导致切换数据库后拿的是上一个数据库的id插入，解决办法要么是预取size设置为1，要么改造默认的生成器以适配数据库切换。
+
+改在默认生成器会比较麻烦，原本的实现写了比较多的情况以及方法的抽象。
