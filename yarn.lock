@@ -1526,6 +1526,7 @@ __metadata:
     hexo-renderer-marked: "npm:^4.1.0"
     hexo-renderer-stylus: "npm:^2.0.1"
     hexo-server: "npm:^2.0.0"
+    hexo-theme-fluid: "npm:^1.9.9"
     hexo-wordcount: "npm:^6.0.1"
     highlight.js: "npm:^11.3.1"
     lodash: "npm:^4.17.21"
@@ -1536,6 +1537,15 @@ __metadata:
     underscore: "npm:^1.13.1"
   languageName: unknown
   linkType: soft
+
+"hexo-theme-fluid@npm:^1.9.9":
+  version: 1.9.9
+  resolution: "hexo-theme-fluid@npm:1.9.9"
+  peerDependencies:
+    nunjucks: ^3.0.0
+  checksum: 10c0/5438f9c29699cbd42af20508c060257b517a6cfbcd115e984a433ba37abe2f870706e77e006a30dc030b84bf49bbd38e714cc946f8eb6bc5f3ab458ef1da3423
+  languageName: node
+  linkType: hard
 
 "hexo-util@npm:^2.0.0, hexo-util@npm:^2.1.0, hexo-util@npm:^2.5.0":
   version: 2.7.0
