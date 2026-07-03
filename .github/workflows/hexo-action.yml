@@ -36,8 +36,8 @@ jobs:
       - name: Install Dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
-          yarn install |
-          yarn info |
+          yarn install &&
+          yarn info &&
           yarn exec hexo version
 #      - uses: actions/checkout@v4
 #        with:
