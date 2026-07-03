@@ -20,9 +20,9 @@ jobs:
       - name: Enable Corepack
         run: corepack enable
       - name: Setup node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: "24"
+          node-version: "lts/Krypton"
           cache: "yarn"
       # Caching dependencies to speed up workflows. (GitHub will remove any cache entries that have not been accessed in over 7 days.)
       - name: Cache node modules
