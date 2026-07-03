@@ -20,7 +20,7 @@ test test！！
 
 
 
-![123](/COLORS_47646872_p0.jpg) 
+![123](COLORS_47646872_p0.jpg) 
 
 [カントク - COLORS(id=47646872)](http://www.pixiv.net/member_illust.php?mode=medium&illust_id=47646872)
 
